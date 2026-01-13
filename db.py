@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def get_connection():
-
     return mysql.connector.connect(
         host=os.getenv("MYSQLHOST"),
         user=os.getenv("MYSQLUSER"),
@@ -26,7 +25,6 @@ def get_user(telegram_id):
 def save_user(telegram_id, region=None):
     conn = get_connection()
     cur = conn.cursor()
-    
     cur.execute(
         "INSERT IGNORE INTO users (telegram_id, region) VALUES (%s, %s)",
         (telegram_id, region),
@@ -46,13 +44,20 @@ def update_region(telegram_id, region):
     cur.close()
     conn.close()
 
-
-
+def count_user():
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT COUNT(*) FROM users")
+    result = cur.fetchone()
+    cur.close() # <--- buni qo'shish kerak edi
+    conn.close()
+    return result[0] if result else 0
 
 def get_all_users():
     conn = get_connection()
     cur = conn.cursor()
     cur.execute("SELECT telegram_id FROM users")
     users = cur.fetchall()
+    cur.close() # <--- buni ham qo'shish kerak edi
     conn.close()
-    return [u[0] for u in users] 
+    return [u[0] for u in users]
