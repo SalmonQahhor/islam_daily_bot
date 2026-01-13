@@ -55,9 +55,20 @@ def count_user():
 
 def get_all_users():
     conn = get_connection()
-    cur = conn.cursor()
-    cur.execute("SELECT telegram_id FROM users")
-    users = cur.fetchall()
-    cur.close() # <--- buni ham qo'shish kerak edi
-    conn.close()
-    return [u[0] for u in users]
+    cur = conn.cursor() # dictionary=True shart emas bu yerda
+    try:
+        cur.execute("SELECT telegram_id FROM users")
+        rows = cur.fetchall()
+        # Kelayotgan ma'lumotni terminalda tekshirish uchun:
+        print(f"DEBUG: Bazadan olingan xom ma'lumot: {rows}")
+        
+        users = [row[0] for row in rows]
+        print(f"DEBUG: Qayta ishlangan IDlar: {users}")
+        
+        return users
+    except Exception as e:
+        print(f"DATABASE ERROR: {e}")
+        return []
+    finally:
+        cur.close()
+        conn.close()
