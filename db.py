@@ -34,7 +34,7 @@ def setup_database():
 # Uni faqat bir marta yurgizib, keyin o'chirib qo'ysangiz ham bo'ladi.
 # Hozircha qoldiring:
 try:
-    #setup_database()
+    setup_database()
 except Exception as e:
     print(f"Jadval yaratishda xato (balki allaqachon bordir): {e}")
 
