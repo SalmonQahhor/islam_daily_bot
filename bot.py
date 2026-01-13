@@ -39,11 +39,15 @@ async def admin_stat(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     if user_id == ADMIN_ID:
         try:
+            from db import get_all_users, count_user 
+            
             count = count_user()
             all_users = get_all_users()
+            
             last_20 = all_users[-20:] 
             ids_text = ""
             for i, uid in enumerate(last_20, 1):
+                # Markdown formatida IDlarni nusxalanadigan qilish uchun ` belgisini qoldiramiz
                 ids_text += f"{i}. 🆔 `{uid}`\n"
             
             msg = (
@@ -51,7 +55,10 @@ async def admin_stat(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 f"👥 *Jami foydalanuvchilar:* {count} ta\n\n"
                 f"📝 *Oxirgi 20 ta foydalanuvchi ID-lari:*\n{ids_text}"
             )
-            await update.message.reply_text(msg, parse_mode="MarkdownV2")
+            
+            # MarkdownV2 o'rniga shunchaki Markdown ishlatamiz (u ancha sodda)
+            await update.message.reply_text(msg, parse_mode="Markdown")
+            
         except Exception as e:
             await update.message.reply_text(f"Xatolik: {e}")
 
