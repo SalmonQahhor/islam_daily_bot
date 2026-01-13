@@ -1,0 +1,11 @@
+islam_bot/          # Loyihaning asosiy papkasi
+│
+├─ bot.py            # Asosiy Telegram bot kodi
+├─ db.py             # Database funksiyalari
+├─ config.py         # BOT_TOKEN va DB_CONFIG
+├─ prayers.py        # Namoz vaqtlarini olish funksiyalari
+├─ ayat.py           # Oyatlarni olish funksiyalari
+├─ requirements.txt  # Python kutubxonalar ro‘yxati
+├─ .env              # Maxfiy parametrlar (token, db paroli)
+├─ .gitignore        # Git uchun ignore qilinadigan fayllar
+└─ README.md         # Loyihaning tavsifi
