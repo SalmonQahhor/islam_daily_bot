@@ -49,10 +49,10 @@ def update_region(telegram_id, region):
 
 
 
-def count_users():
+def get_all_users():
     conn = get_connection()
     cur = conn.cursor()
-    cur.execute("SELECT COUNT(*) FROM users")
-    count = cur.fetchone()[0]
+    cur.execute("SELECT telegram_id FROM users")
+    users = cur.fetchall()
     conn.close()
-    return count
+    return [u[0] for u in users] 
