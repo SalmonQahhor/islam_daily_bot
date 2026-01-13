@@ -3,12 +3,10 @@ from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, Messa
 import os
 
 from config import BOT_TOKEN
-# db.py faylingizda get_all_users funksiyasi bo'lishi shart
 from db import save_user, update_region, get_user, count_user, get_all_users 
 from prayers import get_prayer_times
 from ayat import get_random_ayat
 
-# Sizning Telegram ID raqamingiz
 ADMIN_ID = 5908568613
 
 def main_menu_keyboard():
@@ -18,7 +16,6 @@ def main_menu_keyboard():
     ]
     return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
-# Viloyatlar menyusi
 REGIONS = [
     "Toshkent", "Andijon", "Buxoro", "Farg'ona", "Jizzax",
     "Namangan", "Navoiy", "Qashqadaryo", "Qoraqalpog'iston",
@@ -26,22 +23,24 @@ REGIONS = [
 ]
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    save_user(update.effective_user.id)
+    user = update.effective_user
+    save_user(user.id)
+    
+    # TERMINALGA CHIQARISH
+    print(f"🚀 [START] ID: {user.id} | Ism: {user.first_name} | Username: @{user.username}")
+    
     await update.message.reply_text(
-        f"Assalomu alaykum, {update.effective_user.first_name}!\n"
+        f"Assalomu alaykum, {user.first_name}!\n"
         "Namoz vaqtlari va Oyatlar botiga xush kelibsiz.",
         reply_markup=main_menu_keyboard()
     )
 
-# --- ADMIN STATISTIKA FUNKSIYASI ---
 async def admin_stat(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     if user_id == ADMIN_ID:
         try:
-            count = count_user() # Jami soni
-            all_users = get_all_users() # Hamma IDlar ro'yxati
-            
-            # Oxirgi 20 ta foydalanuvchini ajratib olish
+            count = count_user()
+            all_users = get_all_users()
             last_20 = all_users[-20:] 
             ids_text = ""
             for i, uid in enumerate(last_20, 1):
@@ -52,13 +51,9 @@ async def admin_stat(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 f"👥 *Jami foydalanuvchilar:* {count} ta\n\n"
                 f"📝 *Oxirgi 20 ta foydalanuvchi ID-lari:*\n{ids_text}"
             )
-            
             await update.message.reply_text(msg, parse_mode="MarkdownV2")
         except Exception as e:
             await update.message.reply_text(f"Xatolik: {e}")
-    else:
-        # Boshqalarga javob bermaydi
-        pass
 
 async def set_region_request(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [[r] for r in REGIONS]
@@ -69,21 +64,28 @@ async def set_region_request(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
-    user_id = update.effective_user.id
+    user = update.effective_user
 
     if text in REGIONS:
-        update_region(user_id, text)
+        update_region(user.id, text)
+        
+        # TERMINALGA VILOYATNI CHIQARISH
+        print(f"📍 [REGION] ID: {user.id} | Viloyat: {text}")
+        
         await update.message.reply_text(
             f"✅ Viloyat muvaffaqiyatli saqlandi: {text}",
             reply_markup=main_menu_keyboard()
         )
     elif text == "📅 Bugungi namoz vaqtlari":
-        user = get_user(user_id)
-        if not user or not user.get("region"):
+        # Namoz vaqti so'ralganda ham terminalda ko'rishingiz mumkin
+        print(f"⏰ [PRAYER] ID: {user.id} namoz vaqtlarini ko'rdi.")
+        
+        user_data = get_user(user.id)
+        if not user_data or not user_data.get("region"):
             await set_region_request(update, context)
         else:
-            times = get_prayer_times(user["region"])
-            msg = f"🕌 *{user['region']}* uchun namoz vaqtlari:\n\n"
+            times = get_prayer_times(user_data["region"])
+            msg = f"🕌 *{user_data['region']}* uchun namoz vaqtlari:\n\n"
             for k, v in times.items():
                 msg += f"🔸 *{k}:* {v}\n"
             await update.message.reply_text(msg, parse_mode="Markdown")
@@ -100,7 +102,7 @@ def main():
     app = ApplicationBuilder().token(token).build()
 
     app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("stat", admin_stat)) # Buyruq qo'shildi
+    app.add_handler(CommandHandler("stat", admin_stat))
     app.add_handler(CommandHandler("region", set_region_request))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
