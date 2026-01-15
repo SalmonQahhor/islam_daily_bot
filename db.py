@@ -12,7 +12,7 @@ def get_connection():
         database=os.getenv("MYSQLDATABASE"),
         port=int(os.getenv("MYSQLPORT", 3306)),
         autocommit=True
-    
+    )
 
 def get_user(telegram_id):
     conn = get_connection()
@@ -31,7 +31,6 @@ def save_user(telegram_id, region=None):
     conn = get_connection()
     cur = conn.cursor()
     try:
-        # INSERT IGNORE - agar user allaqachon bor bo'lsa, xato bermaydi va o'zgartirmaydi
         cur.execute(
             "INSERT IGNORE INTO users (telegram_id, region) VALUES (%s, %s)",
             (int(telegram_id), region),
@@ -71,6 +70,5 @@ def get_all_users():
         conn.close()
 
 def count_user():
-    
     users = get_all_users()
     return len(users)
