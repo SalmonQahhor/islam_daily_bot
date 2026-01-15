@@ -1,25 +1,29 @@
 import requests
 
-def get_prayer_times(region):
-    url = f"https://islamprior.uz/api/v1/prayer-times?region={region}"
+def get_prayer_times(city):
+    url = "https://api.aladhan.com/v1/timingsByCity"
+    params = {
+        "city": city,
+        "country": "Uzbekistan",
+        "method": 3,       
+        "school": 1        
+    }
     
     try:
-        response = requests.get(url, timeout=10)
-        if response.status_code == 200:
-            data = response.json()
-            
-            timings = data['times']
-            
-            return {
-                "Bomdod": timings["tong_saharlik"],
-                "Peshin": timings["peshin"],
-                "Asr": timings["asr"],
-                "Shom": timings["shom_iftor"],
-                "Xufton": timings["hufton"]
-            }
-        else:
-            print(f"Xatolik: API javob bermadi (Status: {response.status_code})")
-            return None
+        res = requests.get(url, params=params, timeout=10)
+        res.raise_for_status() # Agar 404 yoki 500 xato bo'lsa, error beradi
+        data = res.json()
+        
+        timings = data["data"]["timings"]
+
+        return {
+            "Bomdod": timings["Fajr"],
+            "Quyosh": timings["Sunrise"], 
+            "Peshin": timings["Dhuhr"],
+            "Asr": timings["Asr"],
+            "Shom": timings["Maghrib"],
+            "Xufton": timings["Isha"],
+        }
     except Exception as e:
-        print(f"Ulanishda xato: {e}")
+        print(f"Xatolik yuz berdi: {e}")
         return None
