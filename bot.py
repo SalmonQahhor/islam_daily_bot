@@ -78,7 +78,7 @@ async def admin_stat(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if user_id == ADMIN_ID:
         user_list = get_all_users()
         total_count = len(user_list)
-        msg = f"📊 *Bot statistikasi*\n\n👥 *Jami foydalanuvchilar:* {total_count} ta"
+        msg = f"📊 *Statistika (admin)*\n\n👥 *Jami foydalanuvchilar:* {total_count} ta"
         await update.message.reply_text(msg, parse_mode="Markdown")
 
 async def set_region_request(update: Update, context: ContextTypes.DEFAULT_TYPE):
