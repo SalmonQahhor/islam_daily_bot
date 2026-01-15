@@ -7,13 +7,33 @@ from config import BOT_TOKEN
 from db import save_user, update_region, get_user, count_user, get_all_users 
 from prayers import get_prayer_times
 from ayat import get_random_ayat
-# Hadislar funksiyasini import qilamiz (hadislar.py fayli bo'lishi kerak)
+
+# Hadislar funksiyasini import qilamiz
 try:
     from hadislar import get_random_hadis
 except ImportError:
     def get_random_hadis(): return "📜 Hadislar fayli topilmadi."
 
 ADMIN_ID = 5908568613
+
+# --- REGION MAPPING (islom.uz uchun) ---
+REGION_MAP = {
+    "Toshkent": "Toshkent",
+    "Andijon": "Andijon",
+    "Buxoro": "Buxoro",
+    "Farg'ona": "Farg'ona",
+    "Jizzax": "Jizzax",
+    "Namangan": "Namangan",
+    "Navoiy": "Navoiy",
+    "Qashqadaryo": "Karshi",
+    "Qoraqalpog'iston": "Nukus",
+    "Samarqand": "Samarqand",
+    "Sirdaryo": "Guliston",
+    "Surxondaryo": "Termiz",
+    "Xorazm": "Urganch"
+}
+
+REGIONS = list(REGION_MAP.keys())
 
 def main_menu_keyboard():
     keyboard = [
@@ -23,13 +43,6 @@ def main_menu_keyboard():
     ]
     return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
-REGIONS = [
-    "Toshkent", "Andijon", "Buxoro", "Farg'ona", "Jizzax",
-    "Namangan", "Navoiy", "Qashqadaryo", "Qoraqalpog'iston",
-    "Samarqand", "Sirdaryo", "Surxondaryo", "Xorazm"
-]
-
-# --- 3-USUL: YORDAM KOMANDASI ---
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     help_text = (
         "🆘 *Yordam markazi*\n\n"
@@ -40,7 +53,6 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     await update.message.reply_text(help_text, parse_mode="Markdown")
 
-# --- ADMIN UCHUN XABAR YUBORISH (/send) ---
 async def send_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     if user_id == ADMIN_ID:
@@ -49,14 +61,12 @@ async def send_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
             all_users = get_all_users()
             count = 0
             await update.message.reply_text(f"⏳ Xabar {len(all_users)} kishiga yuborilmoqda...")
-            
             for uid in all_users:
                 try:
                     await context.bot.send_message(chat_id=uid, text=text_to_send)
                     count += 1
-                    await asyncio.sleep(0.05) # Telegram bloklamasligi uchun
+                    await asyncio.sleep(0.05)
                 except: continue
-            
             await update.message.reply_text(f"✅ Xabar {count} ta foydalanuvchiga yetkazildi.")
         else:
             await update.message.reply_text("⚠️ Namuna: `/send Xabar matni`", parse_mode="Markdown")
@@ -65,7 +75,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     save_user(user.id)
     print(f"🚀 [START] ID: {user.id} | Ism: {user.first_name}")
-    
     await update.message.reply_text(
         f"Assalomu alaykum, {user.first_name}!\n"
         "Namoz vaqtlari, Oyatlar va Hadislar botiga xush kelibsiz.\n"
@@ -74,12 +83,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 async def admin_stat(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = update.effective_user.id
-    if user_id == ADMIN_ID:
-        user_list = get_all_users()
-        total_count = len(user_list)
-        msg = f"📊 *Bot statistikasi*\n\n👥 *Jami foydalanuvchilar:* {total_count} ta"
-        await update.message.reply_text(msg, parse_mode="Markdown")
+    user_list = get_all_users()
+    total_count = len(user_list)
+    msg = f"📊 *Bot statistikasi*\n\n👥 *Jami foydalanuvchilar:* {total_count} ta"
+    await update.message.reply_text(msg, parse_mode="Markdown")
 
 async def set_region_request(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [[r] for r in REGIONS]
@@ -93,37 +100,45 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     user_id = user.id
 
-    # --- 4-USUL: BAZADA BORLIGINI TEKSHIRISH ---
     user_data = get_user(user_id)
     if not user_data and text != "/start":
         await update.message.reply_text(
-            "⚠️ *Bot tizimi yangilandi!*\n\n"
-            "Botdan foydalanish uchun iltimos qaytadan /start buyrug'ini bosing.",
+            "⚠️ *Bot tizimi yangilandi!*\n\nBotdan foydalanish uchun iltimos qaytadan /start buyrug'ini bosing.",
             parse_mode="Markdown"
         )
         return
 
     if text in REGIONS:
         update_region(user_id, text)
-        print(f"📍 [REGION] ID: {user_id} | Viloyat: {text}")
+        print(f"📍 [REGION] ID: {user_id} | Tanlandi: {text}")
         
-        # Viloyat tanlangach avtomatik namoz vaqtini chiqarish
-        times = get_prayer_times(text)
-        msg = f"✅ Viloyat saqlandi: *{text}*\n\n🕌 *Bugungi vaqtlar:*\n"
-        for k, v in times.items():
-            msg += f"🔸 *{k}:* {v}\n"
+        # Mapping orqali API nomini olamiz
+        api_city = REGION_MAP.get(text)
+        times = get_prayer_times(api_city)
         
-        await update.message.reply_text(msg, parse_mode="Markdown", reply_markup=main_menu_keyboard())
+        if times:
+            msg = f"✅ Viloyat saqlandi: *{text}*\n\n🕌 *Bugungi vaqtlar:*\n"
+            for k, v in times.items():
+                msg += f"🔸 *{k}:* {v}\n"
+            await update.message.reply_text(msg, parse_mode="Markdown", reply_markup=main_menu_keyboard())
+        else:
+            await update.message.reply_text("❌ Vaqtlarni olishda xatolik yuz berdi.", reply_markup=main_menu_keyboard())
 
     elif text == "📅 Bugungi namoz vaqtlari":
         if not user_data or not user_data.get("region"):
             await set_region_request(update, context)
         else:
-            times = get_prayer_times(user_data["region"])
-            msg = f"🕌 *{user_data['region']}* uchun namoz vaqtlari:\n\n"
-            for k, v in times.items():
-                msg += f"🔸 *{k}:* {v}\n"
-            await update.message.reply_text(msg, parse_mode="Markdown")
+            user_region = user_data["region"]
+            api_city = REGION_MAP.get(user_region)
+            times = get_prayer_times(api_city)
+            
+            if times:
+                msg = f"🕌 *{user_region}* uchun namoz vaqtlari:\n\n"
+                for k, v in times.items():
+                    msg += f"🔸 *{k}:* {v}\n"
+                await update.message.reply_text(msg, parse_mode="Markdown")
+            else:
+                await update.message.reply_text("❌ Ma'lumot olishda xatolik yuz berdi.")
 
     elif text == "📖 Tasodifiy oyat":
         ayat_text = get_random_ayat()
@@ -149,7 +164,7 @@ def main():
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("help", help_command))
     app.add_handler(CommandHandler("stat", admin_stat))
-    app.add_handler(CommandHandler("send", send_all)) # Admin broadcast
+    app.add_handler(CommandHandler("send", send_all))
     app.add_handler(CommandHandler("region", set_region_request))
     
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
