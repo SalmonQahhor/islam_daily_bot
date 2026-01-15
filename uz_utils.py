@@ -1,7 +1,6 @@
-import re
-
 def finalize_text(text, target_lang):
-    if not text: return ""
+    if not text: 
+        return ""
     
     latin_to_cyr = {
         "sh":"ш","Sh":"Ш","ch":"ч","Ch":"Ч","o'":"ў","O'":"Ў","g'":"ғ","G'":"Ғ",
@@ -17,16 +16,17 @@ def finalize_text(text, target_lang):
         "а":"a","б":"b","д":"d","е":"e","ф":"f","г":"g","ҳ":"h","и":"i","ж":"j",
         "к":"k","л":"l","м":"m","н":"n","о":"o","п":"p","қ":"q","р":"r","с":"s",
         "т":"t","у":"u","в":"v","х":"x","й":"y","з":"z","А":"A","Б":"B","Д":"D",
-        "Е":"E","Ф":"F":"Г":"G","Ҳ":"H","И":"I","Ж":"J","К":"K","Л":"L","М":"M",
+        "Е":"E","Ф":"F","Г":"G","Ҳ":"H","И":"I","Ж":"J","К":"K","Л":"L","М":"M",
         "Н":"N","О":"O","П":"P","Қ":"Q","Р":"R","С":"S","Т":"T","У":"U","В":"V","Х":"X","Й":"Y","З":"Z"
     }
 
+    result = text
     if target_lang == "cyrillic":
         # Lotindan Kirillga
         for k, v in latin_to_cyr.items():
-            text = text.replace(k, v)
+            result = result.replace(k, v)
     else:
         # Kirilldan Lotinga
         for k, v in cyr_to_lat.items():
-            text = text.replace(k, v)
-    return text
+            result = result.replace(k, v)
+    return result
