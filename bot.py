@@ -121,8 +121,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await set_region_request(update, context)
         else:
             times = get_prayer_times(user_data["region"])
-            msg = f"🕌 *{user_data['region']}* uchun namoz vaqtlari:\n
-            (Bomdod va Xufton vaqti farq qilishi mumkin\n\n"
+            msg = f"🕌 *{user_data['region']}* uchun namoz vaqtlari:\n(Bomdod va Xufton vaqti farq qilishi mumkin\n\n"
             for k, v in times.items():
                 msg += f"🔸 *{k}:* {v}\n"
             await update.message.reply_text(msg, parse_mode="Markdown")
