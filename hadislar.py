@@ -3,8 +3,18 @@ import random
 
 def get_random_hadis():
     try:
-        # Tasodifiy hadis API (O'zbekcha)
-        res = requests.get("https://hadis-api-uz.vercel.app/api/hadith/random", timeout=5).json()
-        return f"{res['hadith']}\n\n📍 _({res['source']})_"
-    except:
+        url = "https://raw.githubusercontent.com/u-saidov/hadis-json/main/hadislar.json"
+        
+        response = requests.get(url, timeout=5)
+        if response.status_code == 200:
+            data = response.json()
+            # Kelgan ro'yxatdan bittasini tasodifiy tanlaymiz
+            selected = random.choice(data)
+            return f"📜 {selected['text']}\n\n📍 _({selected['source']})_"
+        else:
+            raise Exception("API xatosi")
+            
+    except Exception as e:
+        print(f"Xato: {e}")
+        # Zaxira hadis (agar internet uzilsa)
         return "📜 «Yaxshilikka dalolat qiluvchi uni qiluvchi kabidir». (Termiziy)"
