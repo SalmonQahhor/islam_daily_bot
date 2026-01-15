@@ -137,7 +137,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     msg += f"🔸 *{k}:* {v}\n"
                 
                 # Al Adhan manbasini qo'shish
-                msg += "\n🌐 Manba: aladhan.com \nXufton va Bomdod 7-15 daqiqa, boshqalarida 1-3 daqiqa farq bo'lishi ehtimoli bor."
+                msg += "\n🌐 Manba: aladhan API \nXufton va Bomdod 7-15 daqiqa, boshqalarida 1-3 daqiqa farq bo'lishi ehtimoli bor."
                 
                 await update.message.reply_text(msg, parse_mode="Markdown")
             else:
