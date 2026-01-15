@@ -106,25 +106,42 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if text in REGIONS:
         update_region(user_id, text)
-        print(f"📍 [REGION] ID: {user_id} | Viloyat: {text}")
+        print(f"📍 [REGION] ID: {user_id} | Tanlandi: {text}")
         
-        # Viloyat tanlangach avtomatik namoz vaqtini chiqarish
+        # Al Adhan uchun shahar nomini yuboramiz
         times = get_prayer_times(text)
-        msg = f"✅ Viloyat saqlandi: *{text}*\n\n🕌 *Bugungi vaqtlar:*\n"
-        for k, v in times.items():
-            msg += f"🔸 *{k}:* {v}\n"
         
-        await update.message.reply_text(msg, parse_mode="Markdown", reply_markup=main_menu_keyboard())
+        if times:
+            msg = f"✅ Viloyat saqlandi: *{text}*\n\n🕌 *Bugungi vaqtlar:*\n"
+            for k, v in times.items():
+                msg += f"🔸 *{k}:* {v}\n"
+            
+            # Al Adhan manbasini qo'shish
+            msg += "\n🌐 _Manba: aladhan.com API_"
+            
+            await update.message.reply_text(msg, parse_mode="Markdown", reply_markup=main_menu_keyboard())
+        else:
+            await update.message.reply_text("❌ Vaqtlarni olishda xatolik yuz berdi.", reply_markup=main_menu_keyboard())
 
     elif text == "📅 Bugungi namoz vaqtlari":
+        user_data = get_user(user_id)
         if not user_data or not user_data.get("region"):
             await set_region_request(update, context)
         else:
-            times = get_prayer_times(user_data["region"])
-            msg = f"🕌 *{user_data['region']}* uchun namoz vaqtlari:\n\n"
-            for k, v in times.items():
-                msg += f"🔸 *{k}:* {v}\n"
-            await update.message.reply_text(msg, parse_mode="Markdown")
+            user_region = user_data["region"]
+            times = get_prayer_times(user_region)
+            
+            if times:
+                msg = f"🕌 *{user_region}* uchun namoz vaqtlari:\n\n"
+                for k, v in times.items():
+                    msg += f"🔸 *{k}:* {v}\n"
+                
+                # Al Adhan manbasini qo'shish
+                msg += "\n🌐 Manba: aladhan.com \nXufton va bomdodda 7-15 daqiqa farq bo'lishi mumkin.\nBoshqalarida 1-3 daqiqa"
+                
+                await update.message.reply_text(msg, parse_mode="Markdown")
+            else:
+                await update.message.reply_text("❌ Ma'lumot olishda xatolik yuz berdi.")
 
     elif text == "📖 Tasodifiy oyat":
         ayat_text = get_random_ayat()
