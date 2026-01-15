@@ -32,11 +32,15 @@ def save_user(telegram_id, region=None):
     cur = conn.cursor()
     try:
         cur.execute(
+            "INSERT IGNORE INTO users (telegram_id, region, lang) VALUES (%s, %s, %s)",
+            (int(telegram_id), region, 'latin'),
+        )
+    except Exception as e:
+        # Agar lang ustuni yo'qligi uchun xato bersa, faqat telegram_id va regionni yozadi
+        cur.execute(
             "INSERT IGNORE INTO users (telegram_id, region) VALUES (%s, %s)",
             (int(telegram_id), region),
         )
-    except Exception as e:
-        print(f"Error saving user: {e}")
     finally:
         cur.close()
         conn.close()
@@ -45,12 +49,16 @@ def update_region(telegram_id, region):
     conn = get_connection()
     cur = conn.cursor()
     try:
-        cur.execute(
-            "UPDATE users SET region=%s WHERE telegram_id=%s",
-            (region, int(telegram_id)),
-        )
-    except Exception as e:
-        print(f"Error updating region: {e}")
+        cur.execute("UPDATE users SET region=%s WHERE telegram_id=%s", (region, int(telegram_id)))
+    finally:
+        cur.close()
+        conn.close()
+
+def update_lang(telegram_id, lang):
+    conn = get_connection()
+    cur = conn.cursor()
+    try:
+        cur.execute("UPDATE users SET lang=%s WHERE telegram_id=%s", (lang, int(telegram_id)))
     finally:
         cur.close()
         conn.close()
@@ -60,26 +68,7 @@ def get_all_users():
     cur = conn.cursor()
     try:
         cur.execute("SELECT telegram_id FROM users")
-        rows = cur.fetchall()
-        return [row[0] for row in rows]
-    except Exception as e:
-        print(f"Error fetching all users: {e}")
-        return []
+        return [row[0] for row in cur.fetchall()]
     finally:
         cur.close()
         conn.close()
-
-
-
-def count_user():
-    users = get_all_users()
-    return len(users)
-
-
-
-def update_lang(user_id, lang):
-    conn = get_connection() # Sizu ishlatgan ulanish funksiyasi nomi
-    cursor = conn.cursor()
-    cursor.execute("UPDATE users SET lang = %s WHERE id = %s", (lang, user_id))
-    conn.commit()
-    conn.close()
