@@ -19,7 +19,7 @@ def main_menu_keyboard():
     keyboard = [
         [KeyboardButton("📅 Bugungi namoz vaqtlari")],
         [KeyboardButton("📖 Tasodifiy oyat"), KeyboardButton("📜 Tasodifiy hadis")],
-        [KeyboardButton("📍 Viloyatni o'zgartirish"), KeyboardButton("📊 Statistika")]
+        [KeyboardButton("📍 Viloyatni o'zgartirish"), KeyboardButton("📊 Statistika (admin)")]
     ]
     return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
@@ -121,18 +121,19 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await set_region_request(update, context)
         else:
             times = get_prayer_times(user_data["region"])
-            msg = f"🕌 *{user_data['region']}* uchun namoz vaqtlari:\n\n"
+            msg = f"🕌 *{user_data['region']}* uchun namoz vaqtlari:\n
+            (Bomdod va Xufton vaqti farq qilishi mumkin\n\n"
             for k, v in times.items():
                 msg += f"🔸 *{k}:* {v}\n"
             await update.message.reply_text(msg, parse_mode="Markdown")
 
     elif text == "📖 Tasodifiy oyat":
         ayat_text = get_random_ayat()
-        await update.message.reply_text(f"✨ *Kun oyati:*\n\n{ayat_text}", parse_mode="Markdown")
+        await update.message.reply_text(f"✨ *Tasodifiy oyati:*\n\n{ayat_text}", parse_mode="Markdown")
 
     elif text == "📜 Tasodifiy hadis":
         hadis_text = get_random_hadis()
-        await update.message.reply_text(f"✨ *Kun hadisi:*\n\n{hadis_text}", parse_mode="Markdown")
+        await update.message.reply_text(f"✨ *Tasodifiy hadis:*\n\n{hadis_text}", parse_mode="Markdown")
 
     elif text == "📍 Viloyatni o'zgartirish":
         await set_region_request(update, context)
