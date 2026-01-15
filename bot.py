@@ -153,8 +153,8 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif text == "📍 Viloyatni o'zgartirish":
         await set_region_request(update, context)
-    
-    elif text == "📊 Statistika":
+
+    elif text == "📊 Statistika (admin)": 
         await admin_stat(update, context)
 
     else:
