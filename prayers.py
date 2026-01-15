@@ -1,20 +1,25 @@
 import requests
-from datetime import datetime
 
-def get_prayer_times(city):
-    url = "https://api.aladhan.com/v1/timingsByCity"
-    params = {
-        "city": city,
-        "country": "Uzbekistan",
-        "method": 2
-    }
-    res = requests.get(url, params=params).json()
-    timings = res["data"]["timings"]
-
-    return {
-        "Bomdod": timings["Fajr"],
-        "Peshin": timings["Dhuhr"],
-        "Asr": timings["Asr"],
-        "Shom": timings["Maghrib"],
-        "Xufton": timings["Isha"],
-    }
+def get_prayer_times(region):
+    url = f"https://islamprior.uz/api/v1/prayer-times?region={region}"
+    
+    try:
+        response = requests.get(url, timeout=10)
+        if response.status_code == 200:
+            data = response.json()
+            
+            timings = data['times']
+            
+            return {
+                "Bomdod": timings["tong_saharlik"],
+                "Peshin": timings["peshin"],
+                "Asr": timings["asr"],
+                "Shom": timings["shom_iftor"],
+                "Xufton": timings["hufton"]
+            }
+        else:
+            print(f"Xatolik: API javob bermadi (Status: {response.status_code})")
+            return None
+    except Exception as e:
+        print(f"Ulanishda xato: {e}")
+        return None
