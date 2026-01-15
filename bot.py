@@ -96,6 +96,7 @@ async def set_region_request(update: Update, context: ContextTypes.DEFAULT_TYPE)
     )
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    api_city = REGION_MAP.get(text).lower() 
     text = update.message.text
     user = update.effective_user
     user_id = user.id
