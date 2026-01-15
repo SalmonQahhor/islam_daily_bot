@@ -5,6 +5,7 @@ islam_bot/          # Loyihaning asosiy papkasi
 ├─ config.py         # BOT_TOKEN va DB_CONFIG
 ├─ prayers.py        # Namoz vaqtlarini olish funksiyalari
 ├─ ayat.py           # Oyatlarni olish funksiyalari
+├─ hadislar.py       # Hadis olish funksiyasi
 ├─ requirements.txt  # Python kutubxonalar ro‘yxati
 ├─ .env              # Maxfiy parametrlar (token, db paroli)
 ├─ .gitignore        # Git uchun ignore qilinadigan fayllar
