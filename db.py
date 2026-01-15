@@ -69,6 +69,14 @@ def get_all_users():
         cur.close()
         conn.close()
 
+
+def update_lang(user_id, lang):
+    conn = get_connection() # bazaga ulanish funksiyangiz nomi
+    cursor = conn.cursor()
+    cursor.execute("UPDATE users SET lang = %s WHERE id = %s", (lang, user_id))
+    conn.commit()
+    conn.close()
+
 def count_user():
     users = get_all_users()
     return len(users)
