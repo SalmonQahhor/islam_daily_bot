@@ -5,11 +5,11 @@ Ushbu Telegram bot foydalanuvchilarga kundalik namoz vaqtlari, Qur'ondan tasodif
 
 ## ✨ Xususiyatlari
 
-* **📅 Namoz Vaqtlari:** AlAdhan API orqali O'zbekistonning 13 ta hududi uchun aniq vaqtlar.
-* **📍 Viloyatni o'zgartirish** Viloyatni o'zgartirib, o'sha joy uchun namoz vaqti chiqaradi.
-* **📖 Oyatlar:** 6236 ta oyatdan tasodifiy bittasini chiqarib beradi
-* **📜 Hadislar:** Tasodifiy sahix hadislar bo'limi.
-* **📊 Admin Panel:** Jami foydalanuvchilar sonini ko'rish (Faqat o'zim uchun)
+* **📅 Namoz Vaqtlari:**  AlAdhan API orqali O'zbekistonning 13 ta hududi uchun aniq vaqtlar.
+* **📍 Viloyatni o'zgartirish**  Viloyatni o'zgartirib, o'sha joy uchun namoz vaqti chiqaradi.
+* **📖 Oyatlar:**  6236 ta oyatdan tasodifiy bittasini chiqarib beradi
+* **📜 Hadislar:**  Tasodifiy sahix hadislar bo'limi.
+* **📊 Admin Panel:**  Jami foydalanuvchilar sonini ko'rish (Faqat o'zim uchun)
 
 
 
@@ -34,6 +34,4 @@ islam_bot
 ├─ ayat.py           # Oyatlarni olish funksiyalari
 ├─ hadislar.py       # Hadis olish funksiyasi
 ├─ requirements.txt  # Python kutubxonalar ro‘yxati
-├─ .env              # TOKEN
-├─ .gitignore        # Git uchun ko'rinmaydiga fayl
 └─ README.md         # Loyihaning tavsifi
