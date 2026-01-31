@@ -2,12 +2,15 @@ from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, MessageHandler, filters
 import os
 import asyncio
+import random 
 
 from config import BOT_TOKEN
-from db import save_user, update_region, get_user, count_user, get_all_users 
+from db import save_user, update_region, get_user, count_user, get_all_users, check_task_limit # check_task_limit qo'shildi
 from prayers import get_prayer_times
 from ayat import get_random_ayat
-# Hadislar funksiyasini import qilamiz (hadislar.py fayli bo'lishi kerak)
+from amallar import AMALLAR 
+
+
 try:
     from hadislar import get_random_hadis
 except ImportError:
@@ -19,7 +22,8 @@ def main_menu_keyboard():
     keyboard = [
         [KeyboardButton("📅 Bugungi namoz vaqtlari")],
         [KeyboardButton("📖 Tasodifiy oyat"), KeyboardButton("📜 Tasodifiy hadis")],
-        [KeyboardButton("📍 Viloyatni o'zgartirish"), KeyboardButton("📊 Statistika (admin)")]
+        [KeyboardButton("📍 Viloyatni o'zgartirish")],
+        [KeyboardButton("✨ Bugungi amal"), KeyboardButton("📊 Statistika (admin)")] # Tugma joylashuvi sozlangan
     ]
     return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
@@ -93,7 +97,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     user_id = user.id
 
-
     # --- 4-USUL: BAZADA BORLIGINI TEKSHIRISH ---
     user_data = get_user(user_id)
     if not user_data and text != "/start":
@@ -153,6 +156,27 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif text == "📍 Viloyatni o'zgartirish":
         await set_region_request(update, context)
+
+    # --- YANGI: BUGUNGI AMAL FUNKSIYASI ---
+    elif text == "✨ Bugungi amal":
+        result = check_task_limit(user_id)
+
+        if result <= 2:
+            vazifa = random.choice(AMALLAR)
+            qolgan_imkoniyat = 2 - result
+            msg = (
+                f"🌟 *Bugungi amalingiz:*\n\n"
+                f"✅ {vazifa}\n\n"
+                f"ℹ️ _Bugun yana {qolgan_imkoniyat} ta yangi amal olishingiz mumkin._"
+            )
+            await update.message.reply_text(msg, parse_mode="Markdown")
+        else:
+            await update.message.reply_text(
+                "🛑 *Limit tugadi!*\n\n"
+                "Bugun uchun 2 ta vazifani qabul qilib bo'ldingiz. Yangi amallarni ertaga olishingiz mumkin. "
+                "Sabr va davomiylik eng yaxshi amallardandir!", 
+                parse_mode="Markdown"
+            )
 
     elif text == "📊 Statistika (admin)": 
         await admin_stat(update, context)
