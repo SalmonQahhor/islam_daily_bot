@@ -1,7 +1,7 @@
 import random
 
 def get_random_hadis():
-    # Eng ishonchli hadislar (asosan Buxoriy va Muslim)
+    
     hadislar_list = [
         {"text": "«Amallar niyatga ko‘radir».", "source": "Buxoriy"},
         {"text": "«Kim Allohga va oxirat kuniga iymon keltirgan bo‘lsa, yo yaxshi gapirsin yoki jim tursin».", "source": "Buxoriy"},
@@ -56,7 +56,40 @@ def get_random_hadis():
         {"text": "«Bandaning amali o‘limidan keyin to‘xtaydi, faqat uch narsa bundan mustasno: sadaqai joriya, foydali ilm yoki uning uchun duo qiladigan solih farzand».", "source": "Muslim"},
         {"text": "«Mo‘minning ishining hammasi ajablanarlidir. Unga bir yaxshilik yetsa — shukr qiladi va bu uning uchun yaxshilik bo‘ladi; unga bir musibat yetsa — sabr qiladi va bu ham uning uchun yaxshilik bo‘ladi».", "source": "Muslim"},
         {"text": "«Kim bir yaxshilikka niyat qilsa-yu, uni bajarmasa, Alloh unga to‘liq bir yaxshilik yozadi. Agar uni bajarsa, o‘n barobaridan yetti yuz barobarigacha yozadi».", "source": "Buxoriy"},
-        {"text": "«Alloh taolo kechasi O‘z qo‘lini kunduzda gunoh qilgan bandaning tavbasi uchun, kunduz O‘z qo‘lini kechasi gunoh qilgan bandaning tavbasi uchun yoyib turadi».", "source": "Muslim"}
+        {"text": "«Alloh taolo kechasi O‘z qo‘lini kunduzda gunoh qilgan bandaning tavbasi uchun, kunduz O‘z qo‘lini kechasi gunoh qilgan bandaning tavbasi uchun yoyib turadi».", "source": "Muslim"},
+
+        {"text": "«Har bir dinning o‘ziga xos xulqi bor, islomning xulqi — hayo».", "source": "Buxoriy"},
+        {"text": "«Banda bir gunoh qilsa, rizqidan mahrum bo‘lishi mumkin».", "source": "Ahmad"},
+        {"text": "«Alloh taolo yumshoqlik berilgan ishni barakali qiladi».", "source": "Muslim"},
+        {"text": "«Kim ertalab sog‘-salomat, uyida xotirjam va bir kunlik rizqi bor holda uyg‘onsa, go‘yo unga butun dunyo berilgandekdir».", "source": "Termiziy"},
+        {"text": "«Mo‘min kishining sukuti tafakkurdir».", "source": "Buxoriy"},
+        {"text": "«Odamlarning eng yomonlari — ikkiyuzlamachilardir».", "source": "Buxoriy"},
+        {"text": "«Alloh taolo adolatli rahbarni Qiyomat kuni O‘z soyasida soyalar».", "source": "Buxoriy"},
+        {"text": "«Duo — ibodatning mag‘zidir».", "source": "Termiziy"},
+        {"text": "«Kim Allohdan afv so‘rasa, Alloh unga chiqish yo‘lini beradi».", "source": "Muslim"},
+        {"text": "«Allohning rahmati g‘azabidan ustundir».", "source": "Buxoriy"},
+        
+        {"text": "«Mo‘min kishining niyati amalidan yaxshiroqdir».", "source": "Buxoriy"},
+        {"text": "«O‘liklarni emas, tirik qalblarni tiriltiringlar».", "source": "Muslim"},
+        {"text": "«Ota-onaga yaxshilik qilish umrni uzaytiradi».", "source": "Buxoriy"},
+        {"text": "«Kim halol yesa, duosi qabul bo‘ladi».", "source": "Muslim"},
+        {"text": "«Mo‘min kishi la’natlovchi bo‘lmaydi».", "source": "Buxoriy"},
+        {"text": "«Eng yaxshi inson — boshqalarga foydasi tekkani».", "source": "Tabaroniy"},
+        {"text": "«Alloh taolo bandaning duosidan uyalmaydi».", "source": "Muslim"},
+        {"text": "«Yaxshi gumon — ibodatdir».", "source": "Buxoriy"},
+        {"text": "«Qalbda bir bo‘lak go‘sht bor — u sog‘ bo‘lsa, butun tanasi sog‘ bo‘ladi».", "source": "Buxoriy"},
+        {"text": "«Alloh bandani sevsa, Jabroilga ham sevdiradi».", "source": "Muslim"},
+        
+        {"text": "«Ilm talab qilish har bir musulmonga farzdir».", "source": "Ibn Moja"},
+        {"text": "«Alloh taolo sabr qiluvchilar bilan birgadir».", "source": "Buxoriy"},
+        {"text": "«Mo‘min kishi yolg‘onchi bo‘lmaydi».", "source": "Muslim"},
+        {"text": "«Kim Alloh uchun tark etsa, Alloh undan yaxshisini beradi».", "source": "Muslim"},
+        {"text": "«Duo qilinglar, ijobat bo‘lishiga ishonib».", "source": "Buxoriy"},
+        {"text": "«Bandaga berilgan eng yomon narsa — qattiq qalbdir».", "source": "Muslim"},
+        {"text": "«Mo‘minning qalbi Allohning rahmati bilan tirikdir».", "source": "Buxoriy"},
+        {"text": "«Alloh taolo tavbani jon halqumga kelmaguncha qabul qiladi».", "source": "Muslim"},
+        {"text": "«Kamtarlik bandani faqat yuksaltiradi».", "source": "Muslim"}
+
 
     ]
 
