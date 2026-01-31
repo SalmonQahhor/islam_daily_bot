@@ -127,6 +127,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await update.message.reply_text("❌ Vaqtlarni olishda xatolik yuz berdi.", reply_markup=main_menu_keyboard())
 
     elif text == "📅 Bugungi namoz vaqtlari":
+        print(f"🕒 [PRAYER] ID: {user_id} | Ism: {user.first_name}")
         user_data = get_user(user_id)
         if not user_data or not user_data.get("region"):
             await set_region_request(update, context)
@@ -147,23 +148,28 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 await update.message.reply_text("❌ Ma'lumot olishda xatolik yuz berdi.")
 
     elif text == "📖 Tasodifiy oyat":
+        print(f"📖 [AYAT] ID: {user_id} | Ism: {user.first_name}")
         ayat_text = get_random_ayat()
         await update.message.reply_text(f"✨ *Tasodifiy oyati:*\n\n{ayat_text}", parse_mode="Markdown")
 
     elif text == "📜 Tasodifiy hadis":
+        print(f"📜 [HADIS] ID: {user_id} | Ism: {user.first_name}")
         hadis_text = get_random_hadis()
         await update.message.reply_text(f"✨ *Tasodifiy hadis:*\n\n{hadis_text}", parse_mode="Markdown")
 
     elif text == "📍 Viloyatni o'zgartirish":
+        print(f"⚙️ [CHANGE_REGION] ID: {user_id}")
         await set_region_request(update, context)
 
     
     elif text == "✨ Bugungi amal":
+        print(f"🌟 [AMAL_REQ] ID: {user_id} | Ism: {user.first_name}")
         result = check_task_limit(user_id)
 
         if result <= 2:
             vazifa = random.choice(AMALLAR)
             qolgan_imkoniyat = 2 - result
+            print(f"✅ [AMAL_GIVEN] ID: {user_id} | Qolgan: {qolgan_imkoniyat}")
             msg = (
                 f"🌟 *Agar imkoni bo'lsa:*\n\n"
                 f"✅ {vazifa}\n\n"
@@ -171,9 +177,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
             await update.message.reply_text(msg, parse_mode="Markdown")
         else:
+            print(f"🛑 [AMAL_LIMIT] ID: {user_id}")
             await update.message.reply_text(
                 "🛑 *Limit tugadi!*\n\n"
-                "Bugun uchun 2 ta vazifani qabul qilib bo'ldingiz. Yangi amallarni ertaga olishingiz mumkin."
+                "Bugun uchun 2 ta vazifani qabul qildingiz. Yangi amallarni ertaga olishingiz mumkin."
                 "\n\nSabr va davomiylik eng yaxshi amallardandir!", 
                 parse_mode="Markdown"
             )
