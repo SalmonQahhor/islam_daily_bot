@@ -157,7 +157,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif text == "📍 Viloyatni o'zgartirish":
         await set_region_request(update, context)
 
-    # --- YANGI: BUGUNGI AMAL FUNKSIYASI ---
+    
     elif text == "✨ Bugungi amal":
         result = check_task_limit(user_id)
 
@@ -165,7 +165,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             vazifa = random.choice(AMALLAR)
             qolgan_imkoniyat = 2 - result
             msg = (
-                f"🌟 *Bugungi amalingiz:*\n\n"
+                f"🌟 *Agar imkoni bo'lsa:*\n\n"
                 f"✅ {vazifa}\n\n"
                 f"ℹ️ _Bugun yana {qolgan_imkoniyat} ta yangi amal olishingiz mumkin._"
             )
