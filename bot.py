@@ -173,8 +173,8 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         else:
             await update.message.reply_text(
                 "🛑 *Limit tugadi!*\n\n"
-                "Bugun uchun 2 ta vazifani qabul qilib bo'ldingiz. Yangi amallarni ertaga olishingiz mumkin. "
-                "Sabr va davomiylik eng yaxshi amallardandir!", 
+                "Bugun uchun 2 ta vazifani qabul qilib bo'ldingiz. Yangi amallarni ertaga olishingiz mumkin."
+                "\nSabr va davomiylik eng yaxshi amallardandir!", 
                 parse_mode="Markdown"
             )
 
