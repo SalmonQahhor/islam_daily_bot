@@ -63,5 +63,8 @@ AMALLAR = [
     "Alloh sizni ko‘rib turganini eslab yuring.",
     "Bugun sabr va shukrni birga tutishga harakat qiling.",
     "Bugun qalbingizni pok niyat bilan to‘ldiring.",
-    "Bugun oxiratni eslab, dunyoga berilib ketmaslikka urinib ko‘ring."
+    "Bugun oxiratni eslab, dunyoga berilib ketmaslikka urinib ko‘ring.",
+
+    "Botdagi 'Tasodfiy oyat' funksiyasini ishlatib, 3 ta oyat o'qing.",
+    "Botdagi 'Tasodifiy hadis' funksiyasini ishlatib, 3 ta yangi hadis o'qing."
 ]
