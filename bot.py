@@ -49,7 +49,7 @@ async def send_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     if user_id == ADMIN_ID:
         if context.args:
-            text_to_send = " ".join(context.args)
+            text_to_send = " ".join(context.args).replace("\\n", "\n")
             all_users = get_all_users()
             count = 0
             await update.message.reply_text(f"⏳ Xabar {len(all_users)} kishiga yuborilmoqda...")
@@ -63,7 +63,7 @@ async def send_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
             
             await update.message.reply_text(f"✅ Xabar {count} ta foydalanuvchiga yetkazildi.")
         else:
-            await update.message.reply_text("⚠️ Namuna: `/send Xabar matni`", parse_mode="Markdown")
+            await update.message.reply_text("⚠️ Namuna: `/send Xabar matni`")
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
