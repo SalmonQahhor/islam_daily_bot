@@ -15,10 +15,9 @@ Ushbu Telegram bot foydalanuvchilarga kundalik namoz vaqtlari, Qur'ondan tasodif
 
 ## 🛠 Texnologiyalar
 
-* **Til:** Python 3.14
-* **Kutubxona:** `python-telegram-bot` (JobQueue bilan)
+* **Til:** Python 3.13
+* **Kutubxona:** `python-telegram-bot` 
 * **Ma'lumotlar bazasi:** MySQL (Railway MySQL)
-* **Vaqt zonasi:** `pytz` (Asia/Tashkent)
 * **API:** AlAdhan (Prayer Times) 
 
 
