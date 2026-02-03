@@ -5,7 +5,7 @@ import asyncio
 import random 
 
 from config import BOT_TOKEN
-from db import save_user, update_region, get_user, count_user, get_all_users, check_task_limit # check_task_limit qo'shildi
+from db import save_user, update_region, get_user, count_user, get_all_users, check_task_limit 
 from prayers import get_prayer_times
 from ayat import get_random_ayat
 from amallar import AMALLAR 
@@ -23,7 +23,7 @@ def main_menu_keyboard():
         [KeyboardButton("📅 Bugungi namoz vaqtlari")],
         [KeyboardButton("📖 Tasodifiy oyat"), KeyboardButton("📜 Tasodifiy hadis")],
         [KeyboardButton("📍 Viloyatni o'zgartirish")],
-        [KeyboardButton("✨ Bugungi amal"), KeyboardButton("📊 Statistika (admin)")] # Tugma joylashuvi sozlangan
+        [KeyboardButton("✨ Bugungi amal"), KeyboardButton("📊 Statistika (admin)")] 
     ]
     return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
@@ -33,7 +33,7 @@ REGIONS = [
     "Samarqand", "Sirdaryo", "Surxondaryo", "Xorazm"
 ]
 
-# --- 3-USUL: YORDAM KOMANDASI ---
+
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     help_text = (
         "🆘 *Yordam markazi*\n\n"
@@ -44,7 +44,7 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     await update.message.reply_text(help_text, parse_mode="Markdown")
 
-# --- ADMIN UCHUN XABAR YUBORISH (/send) ---
+
 async def send_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     if user_id == ADMIN_ID:
@@ -97,7 +97,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     user_id = user.id
 
-    # --- 4-USUL: BAZADA BORLIGINI TEKSHIRISH ---
+    
     user_data = get_user(user_id)
     if not user_data and text != "/start":
         await update.message.reply_text(
@@ -111,7 +111,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         update_region(user_id, text)
         print(f"📍 [REGION] ID: {user_id} | Tanlandi: {text}")
         
-        # Al Adhan uchun shahar nomini yuboramiz
+        
         times = get_prayer_times(text)
         
         if times:
@@ -119,7 +119,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             for k, v in times.items():
                 msg += f"🔸 *{k}:* {v}\n"
             
-            # Al Adhan manbasini qo'shish
+            
             msg += "\n🌐 _Manba: aladhan.com API_"
             
             await update.message.reply_text(msg, parse_mode="Markdown", reply_markup=main_menu_keyboard())
@@ -140,7 +140,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 for k, v in times.items():
                     msg += f"🔸 *{k}:* {v}\n"
                 
-                # Al Adhan manbasini qo'shish
+                
                 msg += "\n🌐 Manba: aladhan API \nXufton va Bomdod 7-15 daqiqa, boshqalarida 1-3 daqiqa farq bo'lishi ehtimoli bor."
                 
                 await update.message.reply_text(msg, parse_mode="Markdown")
@@ -198,7 +198,7 @@ def main():
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("help", help_command))
     app.add_handler(CommandHandler("stat", admin_stat))
-    app.add_handler(CommandHandler("send", send_all)) # Admin broadcast
+    app.add_handler(CommandHandler("send", send_all)) 
     app.add_handler(CommandHandler("region", set_region_request))
     
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
