@@ -164,10 +164,13 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         print(f"🌙 [RAMADAN] ID: {user_id}")
         await update.message.reply_text("🌙 *Ramazon 2026* bo'limiga xush kelibsiz!", reply_markup=ramazon_menu_keyboard(), parse_mode="Markdown")
 
-    elif text in ["🌅 Saharlik vaqti", "🌇 Iftorlik vaqti"]:
+  elif text in ["🌅 Saharlik vaqti", "🌇 Iftorlik vaqti"]:
         print(f"🕒 [RAMADAN_TIME] ID: {user_id} | {text}")
         user_region = user_data.get("region", "Toshkent")
         msg = get_ramazon_info(text, user_region)
+        
+        msg += f"\n\n📚 *Manba:* Sajda.com Ramazon taqvimi (2026)."
+        
         await update.message.reply_text(msg, parse_mode="Markdown")
 
     elif text == "✍️ Fikr va Taklif":
@@ -179,13 +182,20 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         print(f"⚙️ [CHANGE_REGION] ID: {user_id}")
         await set_region_request(update, context)
 
-    elif text == "📅 Namoz Vaqti":
+   elif text == "📅 Namoz Vaqti":
         print(f"🕒 [PRAYER] ID: {user_id}")
         user_region = user_data.get("region")
         times = get_prayer_times(user_region)
         if times:
-            msg = f"🕌 *{user_region}* vaqtlari:\n\n"
-            for k, v in times.items(): msg += f"🔸 *{k}:* {v}\n"
+            msg = f"🕌 *{user_region}* shahri namoz vaqtlari:\n"
+            msg += f"📅 _Bugun: {datetime.now().strftime('%d-%m-%Y')}_\n\n"
+            
+            for k, v in times.items(): 
+                msg += f"🔸 *{k}:* `{v}`\n"
+            
+            msg += f"\n📍 *Manba:* O'zbekiston Musulmonlari idorasi taqvimi asosida."
+            msg += f"\n⚠️ _Eslatma: Vaqtlar Aladhan API orqali olinmoqda._"
+            
             await update.message.reply_text(msg, parse_mode="Markdown")
 
     elif text == "✨ Bugungi amal":
