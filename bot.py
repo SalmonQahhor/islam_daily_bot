@@ -169,7 +169,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             msg += f"📅 _Bugun: {datetime.now().strftime('%d-%m-%Y')}_\n\n"
             for k, v in times.items(): 
                 msg += f"🔸 *{k}:* `{v}`\n"
-            msg += f"\n📍 *Manba:* O'zbekiston Musulmonlari idorasi taqvimi asosida."
             msg += f"\n⚠️ _Eslatma: Vaqtlar Aladhan API orqali olinmoqda._"
             await update.message.reply_text(msg, parse_mode="Markdown")
 
