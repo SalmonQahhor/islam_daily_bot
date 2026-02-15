@@ -199,9 +199,25 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     else:
         if not is_broadcasting:
-            await update.message.reply_text("🏠 *Iltimos, menyudagi tugmalardan foydalaning.*", reply_markup=main_menu_keyboard(), parse_mode="Markdown")
-
-def main():
+            # 1. Foydalanuvchiga javob berish
+            await update.message.reply_text(
+                "🏠 *Asosiy menyu:*\n\nIltimos, quyidagi tugmalardan birini tanlang.", 
+                reply_markup=main_menu_keyboard(), 
+                parse_mode="Markdown"
+            )
+            
+           
+            admin_msg = (
+                f"👤 *Yangi tasodifiy xabar:*\n"
+                f"🆔 ID: `{user_id}`\n"
+                f"👤 Ism: {user.first_name}\n"
+                f"💬 Xabar: {text}"
+            )
+            try:
+                await context.bot.send_message(chat_id=ADMIN_ID, text=admin_msg, parse_mode="Markdown")
+            except Exception as e:
+                print(f"Admin xabar yuborishda xato: {e}")
+                
     token = os.getenv("BOT_TOKEN") or BOT_TOKEN
     app = ApplicationBuilder().token(token).build()
     app.add_handler(CommandHandler("start", start))
