@@ -2,13 +2,14 @@ from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, MessageHandler, filters
 import os
 import asyncio
-import random
+import random 
 
 from config import BOT_TOKEN
 from db import save_user, update_region, get_user, count_user, get_all_users, check_task_limit 
 from prayers import get_prayer_times
 from ayat import get_random_ayat
 from amallar import AMALLAR 
+
 
 try:
     from hadislar import get_random_hadis
@@ -33,6 +34,7 @@ REGIONS = [
     "Samarqand", "Sirdaryo", "Surxondaryo", "Xorazm"
 ]
 
+
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     help_text = (
         "🆘 *Yordam markazi*\n\n"
@@ -43,112 +45,193 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
     await update.message.reply_text(help_text, parse_mode="Markdown")
 
+
 async def send_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
     global is_broadcasting
-    if update.effective_user.id == ADMIN_ID:
+    user_id = update.effective_user.id
+    if user_id == ADMIN_ID:
         is_broadcasting = True
-        await update.message.reply_text("📝 Xabarni yuboring (rasm, matn, enter saqlanadi):")
+        await update.message.reply_text(
+            "📝 *Xabarni yuboring:*\n\nRasm, matn, yangi qatorlar va formatlashlar aynan qanday bo'lsa, shunday tarqatiladi.",
+            parse_mode="Markdown"
+        )
+
 
 async def handle_admin_broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
     global is_broadcasting
-    if update.effective_user.id == ADMIN_ID and is_broadcasting:
-        if update.message.text == "/send": return False
-        
+    user_id = update.effective_user.id
+
+    if user_id == ADMIN_ID and is_broadcasting:
+        if update.message.text == "/send":
+            return False
+
         all_users = get_all_users()
-        count, blocked = 0, 0
-        status_msg = await update.message.reply_text(f"⏳ Yuborilmoqda: 0/{len(all_users)}")
+        count = 0
+        blocked = 0
+        
+        status_msg = await update.message.reply_text(f"⏳ Xabar {len(all_users)} kishiga yuborilmoqda...")
         
         for uid in all_users:
             try:
                 await update.message.copy(chat_id=uid)
                 count += 1
                 if count % 10 == 0:
-                    await status_msg.edit_text(f"⏳ Yuborilmoqda: {count}/{len(all_users)}")
-                await asyncio.sleep(0.05)
+                    await status_msg.edit_text(f"⏳ Yuborilmoqda: {count}/{len(all_users)}...")
+                await asyncio.sleep(0.05) 
             except:
                 blocked += 1
         
         is_broadcasting = False
-        await update.message.reply_text(f"✅ Tugadi\nQabul qildi: {count}\nBlokladi: {blocked}")
+        await update.message.reply_text(
+            f"✅ *Xabar yetkazildi!*\n\n👤 Qabul qildi: {count}\n🚫 Bloklaganlar: {blocked}",
+            parse_mode="Markdown"
+        )
         return True
     return False
+
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     save_user(user.id)
+    print(f"🚀 [START] ID: {user.id} | Ism: {user.first_name}")
+    
     await update.message.reply_text(
-        f"Assalomu alaykum, {user.first_name}!\nIltimos, viloyatingizni tanlang:",
+        f"Assalomu alaykum, {user.first_name}!\n"
+        "Namoz vaqtlari, Oyatlar va Hadislar botiga xush kelibsiz.\n"
+        "Iltimos, viloyatingizni tanlang:",
         reply_markup=ReplyKeyboardMarkup([[r] for r in REGIONS], resize_keyboard=True)
     )
 
+
 async def admin_stat(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.effective_user.id == ADMIN_ID:
+    user_id = update.effective_user.id
+    if user_id == ADMIN_ID:
         user_list = get_all_users()
-        await update.message.reply_text(f"📊 Jami foydalanuvchilar: {len(user_list)} ta")
+        total_count = len(user_list)
+        msg = f"📊 *Statistika (admin)*\n\n👥 *Jami foydalanuvchilar:* {total_count} ta"
+        await update.message.reply_text(msg, parse_mode="Markdown")
+
 
 async def set_region_request(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [[r] for r in REGIONS]
-    await update.message.reply_text("Viloyatni tanlang:", reply_markup=ReplyKeyboardMarkup(keyboard, resize_keyboard=True))
+    await update.message.reply_text(
+        "Iltimos, yashash viloyatingizni tanlang:",
+        reply_markup=ReplyKeyboardMarkup(keyboard, resize_keyboard=True, one_time_keyboard=True)
+    )
+
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if await handle_admin_broadcast(update, context): return
-    
-    text = update.message.text
-    user_id = update.effective_user.id
-    user_data = get_user(user_id)
+    if await handle_admin_broadcast(update, context):
+        return
 
+    text = update.message.text
+    user = update.effective_user
+    user_id = user.id
+
+    user_data = get_user(user_id)
     if not user_data and text != "/start":
-        await update.message.reply_text("⚠️ /start bosing")
+        await update.message.reply_text(
+            "⚠️ *Bot tizimi yangilandi!*\n\n"
+            "Botdan foydalanish uchun iltimos qaytadan /start buyrug'ini bosing.",
+            parse_mode="Markdown"
+        )
         return
 
     if text in REGIONS:
         update_region(user_id, text)
+        print(f"📍 [REGION] ID: {user_id} | Tanlandi: {text}")
+        
         times = get_prayer_times(text)
+        
         if times:
-            msg = f"✅ Saqlandi: {text}\n"
-            for k, v in times.items(): msg += f"🔸 {k}: {v}\n"
-            await update.message.reply_text(msg, reply_markup=main_menu_keyboard())
-    
-    elif text == "📅 Bugungi namoz vaqtlari":
-        user_region = user_data.get("region")
-        if not user_region: await set_region_request(update, context)
+            msg = f"✅ Viloyat saqlandi: *{text}*\n\n🕌 *Bugungi vaqtlar:*\n"
+            for k, v in times.items():
+                msg += f"🔸 *{k}:* {v}\n"
+            
+            msg += "\n🌐 _Manba: aladhan.com API_"
+            
+            await update.message.reply_text(msg, parse_mode="Markdown", reply_markup=main_menu_keyboard())
         else:
+            await update.message.reply_text("❌ Vaqtlarni olishda xatolik yuz berdi.", reply_markup=main_menu_keyboard())
+
+    elif text == "📅 Bugungi namoz vaqtlari":
+        print(f"🕒 [PRAYER] ID: {user_id} | Ism: {user.first_name}")
+        user_data = get_user(user_id)
+        if not user_data or not user_data.get("region"):
+            await set_region_request(update, context)
+        else:
+            user_region = user_data["region"]
             times = get_prayer_times(user_region)
+            
             if times:
-                msg = f"🕌 {user_region} vaqtlari:\n"
-                for k, v in times.items(): msg += f"🔸 {k}: {v}\n"
-                await update.message.reply_text(msg)
+                msg = f"🕌 *{user_region}* uchun namoz vaqtlari:\n\n"
+                for k, v in times.items():
+                    msg += f"🔸 *{k}:* {v}\n"
+                
+                msg += "\n🌐 Manba: aladhan API \nXufton va Bomdodda biroz farq bo'lishi ehtimoli bor."
+                
+                await update.message.reply_text(msg, parse_mode="Markdown")
+            else:
+                await update.message.reply_text("❌ Ma'lumot olishda xatolik yuz berdi.")
 
     elif text == "📖 Tasodifiy oyat":
-        await update.message.reply_text(get_random_ayat())
+        print(f"📖 [AYAT] ID: {user_id} | Ism: {user.first_name}")
+        ayat_text = get_random_ayat()
+        await update.message.reply_text(f"✨ *Tasodifiy oyati:*\n\n{ayat_text}", parse_mode="Markdown")
 
     elif text == "📜 Tasodifiy hadis":
-        await update.message.reply_text(get_random_hadis())
+        print(f"📜 [HADIS] ID: {user_id} | Ism: {user.first_name}")
+        hadis_text = get_random_hadis()
+        await update.message.reply_text(f"✨ *Tasodifiy hadis:*\n\n{hadis_text}", parse_mode="Markdown")
 
     elif text == "📍 Viloyatni o'zgartirish":
+        print(f"⚙️ [CHANGE_REGION] ID: {user_id}")
         await set_region_request(update, context)
 
     elif text == "✨ Bugungi amal":
+        print(f"🌟 [AMAL_REQ] ID: {user_id} | Ism: {user.first_name}")
         result = check_task_limit(user_id)
+
         if result <= 2:
             vazifa = random.choice(AMALLAR)
-            await update.message.reply_text(f"✅ {vazifa}\nImkoniyat: {2-result}")
+            qolgan_imkoniyat = 2 - result
+            print(f"✅ [AMAL_GIVEN] ID: {user_id} | Qolgan: {qolgan_imkoniyat}")
+            msg = (
+                f"🌟 *Agar imkoni bo'lsa:*\n\n"
+                f"✅ {vazifa}\n\n"
+                f"ℹ️ _Bugun yana {qolgan_imkoniyat} ta yangi amal olishingiz mumkin._"
+            )
+            await update.message.reply_text(msg, parse_mode="Markdown")
         else:
-            await update.message.reply_text("🛑 Limit tugadi")
+            print(f"🛑 [AMAL_LIMIT] ID: {user_id}")
+            await update.message.reply_text(
+                "🛑 *Limit tugadi!*\n\n"
+                "Bugun uchun 2 ta vazifani qabul qildingiz. Yangi amallarni ertaga olishingiz mumkin.",
+                parse_mode="Markdown"
+            )
 
-    elif text == "📊 Statistika (admin)":
+    elif text == "📊 Statistika (admin)": 
         await admin_stat(update, context)
+
+    else:
+        await update.message.reply_text("Iltimos, menyudagi tugmalardan foydalaning.", reply_markup=main_menu_keyboard())
+
 
 def main():
     token = os.getenv("BOT_TOKEN") or BOT_TOKEN
     app = ApplicationBuilder().token(token).build()
 
     app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("send", send_all))
+    app.add_handler(CommandHandler("help", help_command))
     app.add_handler(CommandHandler("stat", admin_stat))
+    app.add_handler(CommandHandler("send", send_all)) 
+    app.add_handler(CommandHandler("region", set_region_request))
+    
     app.add_handler(MessageHandler((filters.TEXT | filters.PHOTO | filters.VIDEO) & ~filters.COMMAND, handle_message))
 
+    print("[INFO] Bot ishga tushdi...")
     app.run_polling()
+
 
 if __name__ == "__main__":
     main()
