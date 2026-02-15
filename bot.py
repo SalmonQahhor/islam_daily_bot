@@ -107,7 +107,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(f"🚀 [START] ID: {user.id} | Ism: {user.first_name}")
     await update.message.reply_text(
         f"Assalomu alaykum, *{user.first_name}*!\n\n"
-        "Namoz vaqtlari, Oyat, Hadis va Ramazon taqvimi botiga xush kelibsiz.\n\n"
+        "Islam Daily Botga xush kelibsiz.\n\n"
         "Iltimos, yashash viloyatingizni tanlang:",
         reply_markup=ReplyKeyboardMarkup([[r] for r in REGIONS], resize_keyboard=True),
         parse_mode="Markdown"
