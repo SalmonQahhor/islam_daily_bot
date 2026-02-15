@@ -27,15 +27,17 @@ REGIONS = [
     "Samarqand", "Sirdaryo", "Surxondaryo", "Xorazm"
 ]
 
+
 def main_menu_keyboard():
     keyboard = [
         [KeyboardButton("🌙 Ramazon 2026")],
-        [KeyboardButton("📅 Bugungi namoz vaqtlari")],
+        [KeyboardButton("📍 Viloyatni o'zgartirish"), KeyboardButton("📅 Namoz Vaqti")],
         [KeyboardButton("📖 Tasodifiy oyat"), KeyboardButton("📜 Tasodifiy hadis")],
-        [KeyboardButton("📍 Viloyatni o'zgartirish"), KeyboardButton("✨ Bugungi amal")],
+        [KeyboardButton("✨ Bugungi amal")],
         [KeyboardButton("📊 Statistika (admin)"), KeyboardButton("✍️ Fikr va Taklif")]
     ]
     return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+
 
 def ramazon_menu_keyboard():
     keyboard = [
@@ -43,6 +45,8 @@ def ramazon_menu_keyboard():
         [KeyboardButton("🔙 Orqaga")]
     ]
     return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+
+
 
 def get_ramazon_info(text, user_region):
     today_str = datetime.now().strftime("%Y-%m-%d")
@@ -64,12 +68,14 @@ def get_ramazon_info(text, user_region):
                 f"🌇 *Iftorlik (Og'iz ochish):* `{data['iftorlik']}`\n\n"
                 f"🤲 *Iftorlik duosi:*\n_{IFTORLIK_DUOSI}_")
 
+    
 async def send_all(update: Update, context: ContextTypes.DEFAULT_TYPE):
     global is_broadcasting
     if update.effective_user.id == ADMIN_ID:
         is_broadcasting = True
         await update.message.reply_text("📝 *Xabarni yuboring:*\n\nRasm, video yoki matnli xabaringiz barcha foydalanuvchilarga aynan qanday bo'lsa, shunday yetkaziladi.", parse_mode="Markdown")
 
+    
 async def handle_admin_broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
     global is_broadcasting
     if update.effective_user.id == ADMIN_ID and is_broadcasting:
@@ -94,6 +100,7 @@ async def handle_admin_broadcast(update: Update, context: ContextTypes.DEFAULT_T
         return True
     return False
 
+    
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     save_user(user.id)
@@ -106,15 +113,18 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown"
     )
 
+
 async def admin_stat(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id == ADMIN_ID:
         user_list = get_all_users()
         await update.message.reply_text(f"📊 *Jami foydalanuvchilar:* `{len(user_list)}` ta", parse_mode="Markdown")
 
+    
 async def set_region_request(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [[r] for r in REGIONS]
     await update.message.reply_text("📍 *Viloyatingizni tanlang:*", reply_markup=ReplyKeyboardMarkup(keyboard, resize_keyboard=True), parse_mode="Markdown")
 
+    
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if await handle_admin_broadcast(update, context): return
     
@@ -165,12 +175,11 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         waiting_for_feedback[user_id] = True
         await update.message.reply_text("📝 *Taklif yoki fikringizni yozib qoldiring:*", reply_markup=ReplyKeyboardMarkup([[KeyboardButton("🔙 Orqaga")]], resize_keyboard=True), parse_mode="Markdown")
 
-    elif text == "🔙 Orqaga":
-        print(f"🔙 [BACK] ID: {user_id}")
-        if user_id in waiting_for_feedback: waiting_for_feedback[user_id] = False
-        await update.message.reply_text("🏠 *Asosiy menyu:*", reply_markup=main_menu_keyboard(), parse_mode="Markdown")
+    elif text == "📍 Viloyatni o'zgartirish":
+        print(f"⚙️ [CHANGE_REGION] ID: {user_id}")
+        await set_region_request(update, context)
 
-    elif text == "📅 Bugungi namoz vaqtlari":
+    elif text == "📅 Namoz Vaqti":
         print(f"🕒 [PRAYER] ID: {user_id}")
         user_region = user_data.get("region")
         times = get_prayer_times(user_region)
@@ -178,6 +187,15 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             msg = f"🕌 *{user_region}* vaqtlari:\n\n"
             for k, v in times.items(): msg += f"🔸 *{k}:* {v}\n"
             await update.message.reply_text(msg, parse_mode="Markdown")
+
+    elif text == "✨ Bugungi amal":
+        print(f"🌟 [AMAL] ID: {user_id}")
+        result = check_task_limit(user_id)
+        if result <= 3:
+            vazifa = random.choice(AMALLAR)
+            await update.message.reply_text(f"🌟 *Bugungi tavsiya etilgan amal:*\n\n✅ {vazifa}\n\nℹ️ _Yana {2-result} ta amal olishingiz mumkin._", parse_mode="Markdown")
+        else:
+            await update.message.reply_text("🛑 *Bugun uchun limit tugadi.*", parse_mode="Markdown")
 
     elif text == "📖 Tasodifiy oyat":
         print(f"📖 [AYAT] ID: {user_id}")
@@ -187,17 +205,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         print(f"📜 [HADIS] ID: {user_id}")
         await update.message.reply_text(f"✨ *Hadisi sharif:*\n\n{get_random_hadis()}", parse_mode="Markdown")
 
-    elif text == "📍 Viloyatni o'zgartirish":
-        await set_region_request(update, context)
-
-    elif text == "✨ Bugungi amal":
-        print(f"🌟 [AMAL] ID: {user_id}")
-        result = check_task_limit(user_id)
-        if result <= 2:
-            vazifa = random.choice(AMALLAR)
-            await update.message.reply_text(f"🌟 *Bugungi tavsiya etilgan amal:*\n\n✅ {vazifa}\n\nℹ️ _Bugun yana {2-result} ta amal olishingiz mumkin._", parse_mode="Markdown")
-        else:
-            await update.message.reply_text("🛑 *Bugun uchun limit tugadi.* Ertaga yangi amallar olishingiz mumkin.", parse_mode="Markdown")
+    elif text == "🔙 Orqaga":
+        print(f"🔙 [BACK] ID: {user_id}")
+        if user_id in waiting_for_feedback: waiting_for_feedback[user_id] = False
+        await update.message.reply_text("🏠 *Asosiy menyu:*", reply_markup=main_menu_keyboard(), parse_mode="Markdown")
 
     elif text == "📊 Statistika (admin)":
         await admin_stat(update, context)
@@ -205,6 +216,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         if not is_broadcasting:
             await update.message.reply_text("🏠 *Iltimos, menyudagi tugmalardan foydalaning.*", reply_markup=main_menu_keyboard(), parse_mode="Markdown")
+
 
 def main():
     token = os.getenv("BOT_TOKEN") or BOT_TOKEN
