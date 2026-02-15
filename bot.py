@@ -6,10 +6,10 @@ import random
 from datetime import datetime
 
 from config import BOT_TOKEN
-from db import save_user, update_region, get_user, get_all_users, check_task_limit 
+from db import save_user, update_region, get_user, get_all_users, check_task_limit
 from prayers import get_prayer_times
 from ayat import get_random_ayat
-from amallar import AMALLAR 
+from amallar import AMALLAR
 from ramazon_vaqti import RAMAZON_TAQVIMI, SAHARLIK_DUOSI, IFTORLIK_DUOSI
 
 try:
@@ -169,7 +169,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             msg += f"📅 _Bugun: {datetime.now().strftime('%d-%m-%Y')}_\n\n"
             for k, v in times.items(): 
                 msg += f"🔸 *{k}:* `{v}`\n"
-            msg += f"\n⚠️ _Eslatma: Vaqtlar Aladhan API orqali olinmoqda._"
+            msg += f"\n📍 *Manba:* O'zbekiston Musulmonlari idorasi taqvimi."
             await update.message.reply_text(msg, parse_mode="Markdown")
 
     elif text == "✨ Bugungi amal":
@@ -199,14 +199,11 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     else:
         if not is_broadcasting:
-            # 1. Foydalanuvchiga javob berish
             await update.message.reply_text(
                 "🏠 *Asosiy menyu:*\n\nIltimos, quyidagi tugmalardan birini tanlang.", 
                 reply_markup=main_menu_keyboard(), 
                 parse_mode="Markdown"
             )
-            
-           
             admin_msg = (
                 f"👤 *Yangi tasodifiy xabar:*\n"
                 f"🆔 ID: `{user_id}`\n"
@@ -217,7 +214,8 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 await context.bot.send_message(chat_id=ADMIN_ID, text=admin_msg, parse_mode="Markdown")
             except Exception as e:
                 print(f"Admin xabar yuborishda xato: {e}")
-                
+
+def main():
     token = os.getenv("BOT_TOKEN") or BOT_TOKEN
     app = ApplicationBuilder().token(token).build()
     app.add_handler(CommandHandler("start", start))
