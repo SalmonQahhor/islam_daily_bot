@@ -174,13 +174,26 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif text == "✨ Bugungi amal":
         print(f"🌟 [AMAL] ID: {user_id}")
-        result = check_task_limit(user_id)
-        if result <= 3:
+        result = check_task_limit(user_id) 
+        
+        limit = 3 # Kunlik maksimal limit
+        
+        if result < limit:
             vazifa = random.choice(AMALLAR)
-            await update.message.reply_text(f"🌟 *Bugungi tavsiya etilgan amal:*\n\n✅ {vazifa}\n\nℹ️ _Yana {3-result} ta amal olishingiz mumkin._", parse_mode="Markdown")
+            qoldi = limit - (result + 1) 
+            
+            msg = f"🌟 *Bugungi tavsiya etilgan amal:*\n\n✅ {vazifa}\n\n"
+            if qoldi > 0:
+                msg += f"ℹ️ _Yana {qoldi} ta amal olishingiz mumkin._"
+            else:
+                msg += f"ℹ️ _Bugun uchun boshqa amal qolmadi._"
+                
+            await update.message.reply_text(msg, parse_mode="Markdown")
         else:
-            await update.message.reply_text("🛑 *Bugun uchun limit tugadi.*", parse_mode="Markdown")
-
+            await update.message.reply_text(
+                "🛑 *Bugun uchun limit tugadi.*\n\nYangi amallarni ertaga olishingiz mumkin. 😊", 
+                parse_mode="Markdown"
+            )
     elif text == "📖 Tasodifiy oyat":
         print(f"📖 [AYAT] ID: {user_id}")
         await update.message.reply_text(f"✨ *Qur'oni Karimdan oyat:*\n\n{get_random_ayat()}", parse_mode="Markdown")
