@@ -67,4 +67,41 @@ AMALLAR = [
 
     "Botdagi 'Tasodfiy oyat' funksiyasini ishlatib, 3 ta oyat o'qing.",
     "Botdagi 'Tasodifiy hadis' funksiyasini ishlatib, 3 ta yangi hadis o'qing."
+    
+    
+    "Bugun uydan chiqishda 'Bismillahi tavakkaltu 'alalloh' deb niyat qiling.",
+    "Bugun bitta shirinlik yoki meva bilan biror kishini iftorlikda xursand qiling.",
+    "11 marta: 'Subhanallohi val hamdu lillahi va la ilaha illallohu vallohu akbar' deb ayting.",
+    "Bugun ijtimoiy tarmoqlarda ma'nosiz va bemaza kontetlardan saqlaning, YouTube da mazmunli foydali video ko'rib uni yaqinlarga ham ulashing.",
+    "Bugun biror kishini og'irini yengil qiling.",
+    "Bugun ovqatlanishda faqat o'ng qo'l bilan va o'z oldingizdan yeyishga qat'iy amal qiling.",
+    "11 marta: 'Allohumma inni as'alukal jannah' deb duo qiling.",
+    "Bugun uydagi biron bir buzilgan yoki tartibsiz narsani tuzatib qo'ying.",
+    "Bugun farzandlaringizga yoki kichiklarga birgina yaxshi xulqni o'rgating.",
+    "11 marta: 'Robbana atina fid-dunya hasanatan va fil axiroti hasanah' deb ayting.",
+
+    "Bugun ko'chada hayvonlarga suv yoki yegulik bering.",
+    "Bugun biron tanishingizga 'Sizni Alloh yo'lida yaxshi ko'raman' deb ayting.",
+    "11 marta: 'Subhanallohil 'azim va bihamdihi' deb ayting.",
+    "Bugun kiyimingiz yoki poyabzalingizni ozoda tutishga alohida e'tibor bering.",
+    "Bugun iftor vaqtida suv ichishdan oldin chin dildan duo qiling.",
+    "Bugun biror kishining aybini ko'rsangiz, uni o'ziga tushuntiring va uni boshqalardan sir tuting.",
+    "11 marta: 'Allohumma a'inni 'ala zikrika va shukrika va husni 'ibadatik' deb ayting.",
+    "Bugun ishxonada yoki o'qishda o'z vazifangizni eng namunali darajada bajaring.",
+    "Bugun ko'p gapirishdan ko'ra, ko'proq tinglashga harakat qiling.",
+    "11 marta: 'Ya Zal Jalali val Ikrom' deb Allohga nido qiling.",
+
+    "Bugun biror kishining yaxshi amalini boshqalar oldida maqtab, ko'nglini ko'taring.",
+    "Bugun qo'shningizga yoki yaqin do'stingizga kutilmagan kichik sovg'a bering.",
+    "11 marta: 'La ilaha illa anta subhanaka inni kuntu minaz-zolimin' deb ayting.",
+    "Bugun ginangiz bor kishi bilan salom-alikni tiklang.",
+    "Bugun o'z xatolaringizni o'ylab, ularni takrorlamaslikka niyat qiling.",
+    "11 marta: 'Allohumma barik lana fi Ramazan' deb duo qiling.",
+    "Bugun iftorlikdan so'ng 5 daqiqa dunyo ishlaridan uzilib, tafakkur qiling.",
+    "Bugun 'Al-Fotiha' surasining ma'nosini o'qib, tushunishga harakat qiling.",
+    "Bugun qilgan xatolar va gunohlaringiz uchun chin dildan tavba qiling."
 ]
+
+
+
+
