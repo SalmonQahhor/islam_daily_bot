@@ -51,15 +51,20 @@ def ramazon_menu_keyboard():
     ]
     return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
+
 def get_ramazon_info(text, user_region):
-    today_str = datetime.now().strftime("%Y-%m-%d")
+    uzb_tz = pytz.timezone('Asia/Tashkent')
+    now = datetime.now(uzb_tz)
+    today_str = now.strftime("%Y-%m-%d")
+    
     if user_region not in RAMAZON_TAQVIMI:
         return f"⚠️ *{user_region}* uchun ma'lumot topilmadi."
     
-    if today_str not in RAMAZON_TAQVIMI[user_region]:
-         return "⚠️ *Hozir Ramazon oyi emas!* \n\nUshbu bo'lim 19-fevraldan boshlab ishga tushadi. 😊"
+    data = RAMAZON_TAQVIMI[user_region].get(today_str)
+    
+    if not data:
+         return f"⚠️ *Hozir Ramazon oyi emas!* \n\nUshbu bo'lim 19-fevraldan boshlab ishga tushadi. 😊\n(Sizda hozirgi sana: {today_str})"
 
-    data = RAMAZON_TAQVIMI[user_region][today_str]
     if text == "🌅 Saharlik vaqti":
         return (f"🌙 *{user_region}* | {today_str}\n\n"
                 f"🌅 *Saharlik (Og'iz yopish):* `{data['saharlik']}`\n\n"
