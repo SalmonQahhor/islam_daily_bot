@@ -11,21 +11,29 @@ def get_ramazon_info(text, user_region):
     except:
         now = datetime.now()
 
-    f1 = now.strftime("%Y-%m-%d")
-    f2 = now.strftime("%d-%m-%Y")
-    f3 = now.strftime("%Y-%m-%e").replace(" ", "")
-
     if user_region not in RAMAZON_TAQVIMI:
         return f"⚠️ {user_region} uchun taqvim topilmadi."
 
-    data = RAMAZON_TAQVIMI[user_region].get(f1) or \
-           RAMAZON_TAQVIMI[user_region].get(f2) or \
-           RAMAZON_TAQVIMI[user_region].get(f3)
+    day_data = None
+    possible_dates = [
+        now.strftime("%Y-%m-%d"),
+        now.strftime("%d-%m-%Y"),
+        now.strftime("%Y.%m.%d"),
+        now.strftime("%d.%m.%Y"),
+        f"{now.day}-{now.month}-{now.year}",
+        f"{now.year}-{now.month}-{now.day}"
+    ]
 
-    if not data:
+    for date_str in possible_dates:
+        if date_str in RAMAZON_TAQVIMI[user_region]:
+            day_data = RAMAZON_TAQVIMI[user_region][date_str]
+            current_date_display = date_str
+            break
+
+    if not day_data:
         return "⚠️ Bugun uchun Ramazon taqvimi mavjud emas (Ramazon oyi emas yoki tugagan)."
 
     if "Saharlik" in text:
-        return f"🌙 *{user_region}* | {now.strftime('%d-%m-%Y')}\n\n🌅 Saharlik: *{data['saharlik']}*\n\n*Duosi:* {SAHARLIK_DUOSI}"
+        return f"🌙 *{user_region}* | {current_date_display}\n\n🌅 Saharlik: *{day_data['saharlik']}*\n\n*Duosi:* {SAHARLIK_DUOSI}"
     else:
-        return f"🌟 *{user_region}* | {now.strftime('%d-%m-%Y')}\n\n🌇 Iftorlik: *{data['iftorlik']}*\n\n*Duosi:* {IFTORLIK_DUOSI}"
+        return f"🌟 *{user_region}* | {current_date_display}\n\n🌇 Iftorlik: *{day_data['iftorlik']}*\n\n*Duosi:* {IFTORLIK_DUOSI}"
