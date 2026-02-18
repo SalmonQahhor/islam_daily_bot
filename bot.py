@@ -4,6 +4,7 @@ import os
 import asyncio
 import random
 from datetime import datetime
+import pytz
 
 from config import BOT_TOKEN
 from db import save_user, update_region, get_user, get_all_users, check_task_limit
@@ -17,6 +18,8 @@ try:
 except ImportError:
     def get_random_hadis(): return "📜 Hadislar fayli topilmadi."
 
+
+
 ADMIN_ID = 5908568613
 is_broadcasting = False
 waiting_for_feedback = {}
@@ -26,6 +29,11 @@ REGIONS = [
     "Namangan", "Navoiy", "Qashqadaryo", "Qoraqalpog'iston",
     "Samarqand", "Sirdaryo", "Surxondaryo", "Xorazm"
 ]
+
+
+uzb_tz = pytz.timezone('Asia/Tashkent')
+today_str = datetime.now(uzb_tz).strftime("%Y-%m-%d")
+
 
 def main_menu_keyboard():
     keyboard = [
