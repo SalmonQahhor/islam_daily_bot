@@ -2,4 +2,4 @@ python-telegram-bot
 requests
 mysql-connector-python
 python-dotenv
-
+pytz
