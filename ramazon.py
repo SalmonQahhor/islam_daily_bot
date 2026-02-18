@@ -1,17 +1,11 @@
-from datetime import datetime
-import pytz
+from datetime import datetime, timedelta
 from ramazon_vaqti import RAMAZON_TAQVIMI, SAHARLIK_DUOSI, IFTORLIK_DUOSI
 
 
-
 def get_ramazon_info(text, user_region):
-    try:
-        uzb_tz = pytz.timezone('Asia/Tashkent')
-        now = datetime.now(uzb_tz)
-    except:
-        now = datetime.now()
-
-    today_date = now.strftime("%Y-%m-%d")
+    now_utc = datetime.utcnow()
+    uzb_now = now_utc + timedelta(hours=5)
+    today_date = uzb_now.strftime("%Y-%m-%d")
 
     if user_region not in RAMAZON_TAQVIMI:
         return f"⚠️ {user_region} uchun taqvim topilmadi."
