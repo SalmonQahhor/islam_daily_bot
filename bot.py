@@ -18,8 +18,39 @@ try:
 except ImportError:
     def get_random_hadis(): return "📜 Hadislar fayli topilmadi."
 
+####
 
+from datetime import datetime, timedelta
+from ramazon_vaqti import RAMAZON_TAQVIMI, SAHARLIK_DUOSI, IFTORLIK_DUOSI
 
+def get_ramazon_info(text, user_region):
+    now_utc = datetime.utcnow()
+    uzb_now = now_utc + timedelta(hours=5)
+    today_date = uzb_now.strftime("%Y-%m-%d")
+
+    clean_region = user_region.replace("'", "‘").strip()
+    
+    target_region = None
+    for r in RAMAZON_TAQVIMI.keys():
+        if clean_region.lower() in r.lower():
+            target_region = r
+            break
+            
+    if not target_region:
+        return f"⚠️ {user_region} topilmadi. Bazada borlari: {', '.join(list(RAMAZON_TAQVIMI.keys())[:3])}"
+
+    vaqtlar = RAMAZON_TAQVIMI[target_region].get(today_date)
+
+    if not vaqtlar:
+        first_date = list(RAMAZON_TAQVIMI[target_region].keys())[0]
+        return f"⚠️ Bot {today_date}ni qidirdi, lekin bazada {first_date} turibdi."
+
+    if "Saharlik" in text:
+        return f"🌙 *{target_region}* | {today_date}\n\n🌅 Saharlik: *{vaqtlar['saharlik']}*\n\n*Duosi:* {SAHARLIK_DUOSI}"
+    else:
+        return f"🌟 *{target_region}* | {today_date}\n\n🌇 Iftorlik: *{vaqtlar['iftorlik']}*\n\n*Duosi:* {IFTORLIK_DUOSI}"
+
+####
 ADMIN_ID = 5908568613
 is_broadcasting = False
 waiting_for_feedback = {}
